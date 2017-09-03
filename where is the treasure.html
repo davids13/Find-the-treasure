@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="utf-8"/>
+    <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+    <title>Find the buried treasure</title>
+</head>
+<body>
+
+    <h1 id="heading">Find the buried treasure!</h1>
+    <h2>Clicks left: <span id="nr">25</span></h2>
+    <img id="map" width=400 height=400 src="http://nostarch.com/images/treasuremap.png" alt="treasure map"/>
+    <p id="distance"></p>
+
+    <script>
+        /*
+        // DESIGNING THE GAME - FIND THE TREASURE
+        1 - CREATE A WEB PAGE WITH AN IMAGE (TREASURE MAP) AND A PLACE TO DISPLAY MESSAGES TO THE PLAYER
+        2 - PICK A RANDOM SPOT ON THE MAP PICTURE TO HIDE THE TREASURE
+        3 - CREATE A CLICK HANDLER. EACH TIME THE PLAYER CLICKS THE MAP THE CLICK HANDLER WILL DO THE FOLLOWING:
+            A - ADD 1 TO A CLICK COUNTER
+            B - CALCULATE HOW FAR THE CLICK LOCATION IS FROM THE TREASURE LOCATION
+            C - DISPLAY A MESSAGE ON THE WEB PAGE TO TELL THE PLAYER WHETHER TEY´RE HOT OR COLD
+            D - CONGRATULATE THE PLAYER IF THEY CLICK THE TREASURE OR VERY CLOSE TO IT, AND SAY OF MANY CLICKS IT TOOK TO FIND THE TREASURE
+        */
+
+        // SETTING THE TREASURE COORDINATES
+        var width = 400, height = 400, counter = 25, clicks = 0;
+
+        // CREATE A RANDOM TARGET LOCATION
+        var target = { x:getRandomNumber(width), y:getRandomNumber(height) };
+
+        // GET A RANDOM NUMBER FROM 0 TO SIZE
+        function getRandomNumber(size){
+            return Math.floor(Math.random() * size);
+        };
+
+        // ADD A CLICK HANDLER TO THE IMG ELEMENT
+        $("#map").click(function(event){
+            clicks++;
+            counter--;
+            if(counter > 0){
+                // CALCULATING THE DISTANCE (WITH PYTHAGOREAN THEOREM) BETWEEN THE CLICK AND THE TREASURE(TARGET)
+                function getDistance(event, target){
+                    var diffX = event.offsetX - target.x;
+                    var diffY = event.offsetY - target.y;
+                    return Math.sqrt((diffX * diffX) + (diffY * diffX));
+                };
+
+                // GET A STRING REPRESETAION THE PLAYER HOW CLOSE THEY ARE
+                function getDistanceHint(distance){
+                    if(distance < 10){
+                        return "Boilling hot!";
+                    }
+                    else if(distance < 20){
+                        return "Really hot!";
+                    }
+                    else if(distance < 40){
+                        return "Hot!";
+                    }
+                    else if(distance < 80){
+                        return "Warn!";
+                    }
+                    else if(distance < 160){
+                        return "Cold!";
+                    }
+                    else if(distance < 320){
+                        return "Really cold!";
+                    }
+                    else{
+                        return "Freezing!";
+                    }
+                };
+
+                // GET DISTANCE BETWEEN CLICK EVENT AND TARGET
+                var distance = getDistance(event, target);
+
+                // CONVERT DISTANCE TO A HINT
+                var distanceHint = getDistanceHint(distance);
+
+                // UPDATE THE #DISTANCE ELEMENT WITH NEW HINT
+                $("#distance").text(distanceHint);
+
+                // IF THE CLICK WAS CLOSE ENOUGH, TELL THEM THEY WON
+                if(distance < 8){
+                    $("#distance").append("<h2>Found the treasure in " + clicks + " clicks</h2>");
+                }
+                $("#nr").text(counter);
+            }
+            else{
+                $("#nr").text("Game over!").fadeOut(1000).fadeIn(1000).fadeOut(1000).fadeIn(1000);
+            }
+        });
+    </script>
+</body>
+</html>
